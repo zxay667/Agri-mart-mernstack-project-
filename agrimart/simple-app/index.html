@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriMart - Farming Supplies</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 56px; /* For fixed navbar */
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #28a745 !important;
+        }
+        .hero-section {
+            background-color: #e9ecef;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .hero-title {
+            font-weight: 700;
+        }
+        .hero-subtitle {
+            margin-bottom: 1.5rem;
+        }
+        .product-card {
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .category-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .price {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .rating {
+            color: #ffc107;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        .footer-links {
+            list-style: none;
+            padding-left: 0;
+        }
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        .footer-links a {
+            color: #f8f9fa;
+            text-decoration: none;
+        }
+        .footer-links a:hover {
+            color: #28a745;
+        }
+        #cart-count {
+            position: relative;
+            top: -10px;
+            left: -5px;
+            font-size: 0.7rem;
+        }
+        .modal-body {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        .cart-item {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .cart-item-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+        .cart-total {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .page {
+            display: none;
+        }
+        .active-page {
+            display: block;
+        }
+        .product-detail-img {
+            max-height: 400px;
+            object-fit: contain;
+        }
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+        .quantity-control button {
+            width: 30px;
+        }
+        .quantity-control input {
+            width: 50px;
+            text-align: center;
+        }
+        .btn-quantity {
+            background-color: #e9ecef;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="showPage('home')"><i class="fas fa-leaf me-2"></i>AgriMart</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showPage('home')">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('products')">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('about')">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('contact')">Contact</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#cartModal">
+                            <i class="fas fa-shopping-cart me-1"></i>Cart
+                            <span class="badge bg-danger rounded-pill" id="cart-count">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="fas fa-user me-1"></i>Sign In
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cartModalLabel">Your Shopping Cart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="cart-items-container">
+                    <!-- Cart items will be dynamically added here -->
+                    <div class="text-center" id="empty-cart-message">
+                        <p>Your cart is empty.</p>
+                        <p>Add some products to get started!</p>
+                    </div>
+                    <div id="cart-items-list" class="d-none">
+                        <!-- Cart items will be added here -->
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <div class="cart-total">
+                        Total: $<span id="cart-total">0.00</span>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue Shopping</button>
+                        <button type="button" class="btn btn-success" id="checkout-btn" onclick="checkout()">Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Sign In</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="email" value="admin@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" value="123456" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-primary" onclick="login()">Sign In</button>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="text-center">
+                        <p>Don't have an account? <a href="#" onclick="showRegisterForm()">Register</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container mt-4">
+        <!-- Home Page -->
+        <div id="home-page" class="page active-page">
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <div class="container text-center">
+                    <h1 class="hero-title">AgriMart - Farming Supplies</h1>
+                    <p class="hero-subtitle">High-quality farming tools, seeds, and fertilizers. Boost your farm's productivity with trusted products!</p>
+                    <button type="button" class="btn btn-success btn-lg" onclick="showPage('products')">Shop Now</button>
+                </div>
+            </div>
+
+            <!-- Category Filters -->
+            <div class="row mb-4 mt-4">
+                <div class="col-12 d-flex justify-content-center flex-wrap">
+                    <button type="button" class="btn btn-success m-1 category-filter" data-category="all">All Products</button>
+                    <button type="button" class="btn btn-outline-success m-1 category-filter" data-category="Tools">Tools</button>
+                    <button type="button" class="btn btn-outline-success m-1 category-filter" data-category="Seeds">Seeds</button>
+                    <button type="button" class="btn btn-outline-success m-1 category-filter" data-category="Fertilizers">Fertilizers</button>
+                    <button type="button" class="btn btn-outline-success m-1 category-filter" data-category="Pesticides">Pesticides</button>
+                    <button type="button" class="btn btn-outline-success m-1 category-filter" data-category="Other">Other</button>
+                </div>
+            </div>
+
+            <!-- Featured Products -->
+            <h2 class="mb-4">Featured Products</h2>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="products-container">
+                <!-- Product cards will be dynamically generated here -->
+            </div>
+        </div>
+
+        <!-- Products Page -->
+        <div id="products-page" class="page">
+            <h1 class="mb-4">All Products</h1>
+
+            <!-- Category Filters -->
+            <div class="row mb-4">
+                <div class="col-12 d-flex justify-content-center flex-wrap">
+                    <button type="button" class="btn btn-success m-1 category-filter" data-category="all">All Products</button>
+                    <button type="button" class="btn btn-outline-success m-1 category-filter" data-category="Tools">Tools</button>
+                    <button type="button" class="btn btn-outline-success m-1 category-filter" data-category="Seeds">Seeds</button>
+                    <button type="button" class="btn btn-outline-success m-1 category-filter" data-category="Fertilizers">Fertilizers</button>
+                    <button type="button" class="btn btn-outline-success m-1 category-filter" data-category="Pesticides">Pesticides</button>
+                    <button type="button" class="btn btn-outline-success m-1 category-filter" data-category="Other">Other</button>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="all-products-container">
+                <!-- Product cards will be dynamically generated here -->
+            </div>
+        </div>
+
+        <!-- Product Detail Page -->
+        <div id="product-detail-page" class="page">
+            <div class="row">
+                <div class="col-md-6">
+                    <img id="product-detail-image" src="" alt="" class="img-fluid product-detail-img">
+                </div>
+                <div class="col-md-6">
+                    <h2 id="product-detail-name"></h2>
+                    <div class="mb-3" id="product-detail-rating"></div>
+                    <h3 class="text-success" id="product-detail-price"></h3>
+                    <p id="product-detail-description"></p>
+                    <div class="mb-3">
+                        <span class="badge bg-success" id="product-detail-category"></span>
+                        <span class="ms-2" id="product-detail-stock"></span>
+                    </div>
+                    <div class="quantity-control mb-3">
+                        <button type="button" class="btn btn-quantity" onclick="decreaseQuantity()">-</button>
+                        <input type="number" id="product-detail-quantity" value="1" min="1" max="10" class="form-control mx-2">
+                        <button type="button" class="btn btn-quantity" onclick="increaseQuantity()">+</button>
+                    </div>
+                    <button type="button" class="btn btn-success btn-lg w-100" onclick="addToCartFromDetail()">Add to Cart</button>
+                    <button type="button" class="btn btn-outline-secondary mt-2 w-100" onclick="showPage('products')">Back to Products</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="about-page" class="page">
+            <h1 class="mb-4">About AgriMart</h1>
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Farm field" class="img-fluid rounded mb-4">
+                </div>
+                <div class="col-md-6">
+                    <h2>Our Mission</h2>
+                    <p>At AgriMart, we're dedicated to providing high-quality farming supplies to help farmers increase productivity and sustainability.</p>
+                    <p>Founded in 2023, we've quickly become a trusted source for agricultural tools, seeds, fertilizers, and more.</p>
+                    <h2>Our Values</h2>
+                    <ul>
+                        <li><strong>Quality:</strong> We source only the best products from trusted manufacturers.</li>
+                        <li><strong>Sustainability:</strong> We promote eco-friendly farming practices.</li>
+                        <li><strong>Customer Service:</strong> We're committed to helping our customers succeed.</li>
+                        <li><strong>Innovation:</strong> We stay at the forefront of agricultural technology.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Page -->
+        <div id="contact-page" class="page">
+            <h1 class="mb-4">Contact Us</h1>
+            <div class="row">
+                <div class="col-md-6">
+                    <form id="contact-form">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="contact-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="contact-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="contact-subject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="contact-message" rows="5" required></textarea>
+                        </div>
+                        <button type="button" class="btn btn-success" onclick="submitContactForm()">Send Message</button>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <h3>Get in Touch</h3>
+                    <p>We'd love to hear from you! Please fill out the form or contact us using the information below.</p>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-map-marker-alt me-2"></i>Address</h5>
+                        <p>123 Farm Road, Agricultural District, Country</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-phone me-2"></i>Phone</h5>
+                        <p>+1 (123) 456-7890</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-envelope me-2"></i>Email</h5>
+                        <p>info@agrimart.com</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-clock me-2"></i>Business Hours</h5>
+                        <p>Monday - Friday: 9:00 AM - 5:00 PM<br>Saturday: 10:00 AM - 2:00 PM<br>Sunday: Closed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>AgriMart</h5>
+                    <p>Your trusted source for high-quality farming supplies.</p>
+                    <div class="d-flex mt-3">
+                        <a href="#" class="me-3 text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="me-3 text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="me-3 text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="showPage('home')">Home</a></li>
+                        <li><a href="#" onclick="showPage('products')">Products</a></li>
+                        <li><a href="#" onclick="showPage('about')">About Us</a></li>
+                        <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Contact Us</h5>
+                    <p><i class="fas fa-envelope me-2"></i>info@agrimart.com</p>
+                    <p><i class="fas fa-phone me-2"></i>+1 (123) 456-7890</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>123 Farm Road, Agricultural District</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p>&copy; 2023 AgriMart - All Rights Reserved</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Checkout Success Modal -->
+    <div class="modal fade" id="checkoutSuccessModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Order Placed Successfully!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    <h4 class="mt-3">Thank You for Your Order</h4>
+                    <p>Your order has been placed successfully.</p>
+                    <p>Order #: <span id="order-number"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Continue Shopping</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Success Modal -->
+    <div class="modal fade" id="contactSuccessModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Message Sent!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-envelope-open-text text-success" style="font-size: 4rem;"></i>
+                    <h4 class="mt-3">Thank You for Contacting Us</h4>
+                    <p>We have received your message and will get back to you shortly.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Product data
+        const products = [
+            {
+                id: 1,
+                name: 'Premium Garden Trowel',
+                image: 'https://m.media-amazon.com/images/I/71Y0+UO3g-L._AC_SL1500_.jpg',
+                description: 'High-quality stainless steel garden trowel with ergonomic handle. Perfect for planting, transplanting, and weeding.',
+                brand: 'GardenPro',
+                category: 'Tools',
+                price: 19.99,
+                countInStock: 10,
+                rating: 4.5,
+                numReviews: 12,
+                isFeatured: true
+            },
+            {
+                id: 2,
+                name: 'Organic Tomato Seeds',
+                image: 'https://m.media-amazon.com/images/I/81qNBYs9B0L._AC_SL1500_.jpg',
+                description: 'Certified organic heirloom tomato seeds. Produces large, juicy tomatoes perfect for salads and cooking.',
+                brand: 'SeedMaster',
+                category: 'Seeds',
+                price: 4.99,
+                countInStock: 25,
+                rating: 4.0,
+                numReviews: 8,
+                isFeatured: true
+            },
+            {
+                id: 3,
+                name: 'All-Purpose Organic Fertilizer',
+                image: 'https://m.media-amazon.com/images/I/81UDHoLJwHL._AC_SL1500_.jpg',
+                description: 'Balanced NPK formula suitable for all plants. Made from organic materials for sustainable gardening.',
+                brand: 'GrowWell',
+                category: 'Fertilizers',
+                price: 24.99,
+                countInStock: 15,
+                rating: 4.8,
+                numReviews: 15,
+                isFeatured: true
+            },
+            {
+                id: 4,
+                name: 'Heavy-Duty Garden Hoe',
+                image: 'https://m.media-amazon.com/images/I/61Ym1bN1BpL._AC_SL1500_.jpg',
+                description: 'Durable garden hoe with carbon steel blade and hardwood handle. Ideal for breaking up soil and removing weeds.',
+                brand: 'GardenPro',
+                category: 'Tools',
+                price: 34.99,
+                countInStock: 8,
+                rating: 4.2,
+                numReviews: 10,
+                isFeatured: false
+            },
+            {
+                id: 5,
+                name: 'Organic Carrot Seeds',
+                image: 'https://m.media-amazon.com/images/I/71Gi9SbFLlL._AC_SL1200_.jpg',
+                description: 'Organic non-GMO carrot seeds. Produces sweet, crunchy carrots rich in vitamins and minerals.',
+                brand: 'SeedMaster',
+                category: 'Seeds',
+                price: 3.99,
+                countInStock: 30,
+                rating: 4.3,
+                numReviews: 7,
+                isFeatured: false
+            },
+            {
+                id: 6,
+                name: 'Soil pH Testing Kit',
+                image: 'https://m.media-amazon.com/images/I/71+ObJGNsjL._AC_SL1500_.jpg',
+                description: 'Accurate soil pH testing kit to ensure optimal growing conditions for your plants. Easy to use with quick results.',
+                brand: 'SoilSense',
+                category: 'Tools',
+                price: 15.99,
+                countInStock: 20,
+                rating: 4.1,
+                numReviews: 9,
+                isFeatured: false
+            },
+            {
+                id: 7,
+                name: 'Organic Pest Control Spray',
+                image: 'https://m.media-amazon.com/images/I/71aXzv34N+L._AC_SL1500_.jpg',
+                description: 'Natural pest control solution made from essential oils. Safe for use around children and pets.',
+                brand: 'NaturalGuard',
+                category: 'Pesticides',
+                price: 12.99,
+                countInStock: 18,
+                rating: 3.9,
+                numReviews: 11,
+                isFeatured: false
+            },
+            {
+                id: 8,
+                name: 'Premium Pruning Shears',
+                image: 'https://m.media-amazon.com/images/I/61JhQIhQwVL._AC_SL1500_.jpg',
+                description: 'Professional-grade pruning shears with titanium-coated blades. Perfect for precise cuts on branches up to 3/4 inch thick.',
+                brand: 'GardenPro',
+                category: 'Tools',
+                price: 29.99,
+                countInStock: 12,
+                rating: 4.7,
+                numReviews: 14,
+                isFeatured: true
+            }
+        ];
+
+        // Cart data
+        let cart = [];
+        let currentProduct = null;
+
+        // DOM elements
+        const productsContainer = document.getElementById('products-container');
+        const allProductsContainer = document.getElementById('all-products-container');
+        const cartCountElement = document.getElementById('cart-count');
+        const cartItemsList = document.getElementById('cart-items-list');
+        const emptyCartMessage = document.getElementById('empty-cart-message');
+        const cartTotalElement = document.getElementById('cart-total');
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Display products
+            displayProducts();
+
+            // Add event listeners to category filters
+            document.querySelectorAll('.category-filter').forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    filterProducts(category);
+                });
+            });
+        });
+
+        // Display products
+        function displayProducts() {
+            // Display featured products on home page
+            const featuredProducts = products.filter(product => product.isFeatured);
+            displayProductsInContainer(featuredProducts, productsContainer);
+
+            // Display all products on products page
+            displayProductsInContainer(products, allProductsContainer);
+        }
+
+        // Display products in a container
+        function displayProductsInContainer(productsToDisplay, container) {
+            container.innerHTML = '';
+
+            productsToDisplay.forEach(product => {
+                const productCard = createProductCard(product);
+                container.appendChild(productCard);
+            });
+        }
+
+        // Create a product card
+        function createProductCard(product) {
+            const col = document.createElement('div');
+            col.className = 'col';
+
+            // Get category icon
+            const categoryIcon = getCategoryIcon(product.category);
+
+            col.innerHTML = `
+                <div class="card product-card h-100">
+                    <div class="card-img-container position-relative" style="height: 200px; overflow: hidden;">
+                        <img src="${product.image}" class="card-img-top" alt="${product.name}"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22286%22%20height%3D%22180%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20286%20180%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_1879e81f0c7%20text%20%7B%20fill%3A%23999%3Bfont-weight%3Anormal%3Bfont-family%3A-apple-system%2CBlinkMacSystemFont%2C%26quot%3BSegoe%20UI%26quot%3B%2CRoboto%2C%26quot%3BHelvetica%20Neue%26quot%3B%2CArial%2C%26quot%3BNoto%20Sans%26quot%3B%2Csans-serif%2C%26quot%3BApple%20Color%20Emoji%26quot%3B%2C%26quot%3BSegoe%20UI%20Emoji%26quot%3B%2C%26quot%3BSegoe%20UI%20Symbol%26quot%3B%2C%26quot%3BNoto%20Color%20Emoji%26quot%3B%2C%20monospace%3Bfont-size%3A14pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1879e81f0c7%22%3E%3Crect%20width%3D%22286%22%20height%3D%22180%22%20fill%3D%22%23f8f9fa%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22108.5390625%22%20y%3D%2297.5%22%3E${product.name}%3C%2Ftext%3E%3C%2Fg%3E%3Cg%3E%3Ctext%20x%3D%22108.5390625%22%20y%3D%22120%22%3E%3Ci%20class%3D%22${categoryIcon}%22%3E%3C%2Fi%3E%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E';">
+                        <div class="image-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background-color: rgba(0,0,0,0.1);">
+                            <i class="${categoryIcon} fa-2x text-white d-none"></i>
+                        </div>
+                    </div>
+                    <span class="badge bg-success category-badge">${product.category}</span>
+                    <div class="card-body">
+                        <h5 class="card-title">${product.name}</h5>
+                        <p class="card-text">${product.description.substring(0, 100)}${product.description.length > 100 ? '...' : ''}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="rating">
+                                ${getRatingStars(product.rating)}
+                                <small class="text-muted ms-1">(${product.numReviews})</small>
+                            </div>
+                            <span class="price">$${product.price.toFixed(2)}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <button type="button" class="btn btn-success w-100" onclick="addToCart(${product.id})">Add to Cart</button>
+                        <button type="button" class="btn btn-outline-secondary w-100 mt-2" onclick="viewProductDetails(${product.id})">View Details</button>
+                    </div>
+                </div>
+            `;
+
+            return col;
+        }
+
+        // Get category icon
+        function getCategoryIcon(category) {
+            switch(category) {
+                case 'Tools':
+                    return 'fas fa-tools';
+                case 'Seeds':
+                    return 'fas fa-seedling';
+                case 'Fertilizers':
+                    return 'fas fa-prescription-bottle';
+                case 'Pesticides':
+                    return 'fas fa-bug';
+                default:
+                    return 'fas fa-leaf';
+            }
+        }
+
+        // Get rating stars HTML
+        function getRatingStars(rating) {
+            let starsHtml = '';
+
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHtml += '<i class="fas fa-star"></i>';
+                } else if (i - 0.5 <= rating) {
+                    starsHtml += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    starsHtml += '<i class="far fa-star"></i>';
+                }
+            }
+
+            return starsHtml;
+        }
+
+        // Filter products by category
+        function filterProducts(category) {
+            let filteredProducts = products;
+
+            if (category !== 'all') {
+                filteredProducts = products.filter(product => product.category === category);
+            }
+
+            // Update category buttons
+            document.querySelectorAll('.category-filter').forEach(button => {
+                if (button.getAttribute('data-category') === category) {
+                    button.classList.remove('btn-outline-success');
+                    button.classList.add('btn-success');
+                } else {
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-outline-success');
+                }
+            });
+
+            // Display filtered products
+            displayProductsInContainer(filteredProducts, allProductsContainer);
+
+            // If on home page, filter featured products too
+            if (document.getElementById('home-page').classList.contains('active-page')) {
+                let filteredFeaturedProducts = featuredProducts;
+
+                if (category !== 'all') {
+                    filteredFeaturedProducts = featuredProducts.filter(product => product.category === category);
+                }
+
+                displayProductsInContainer(filteredFeaturedProducts, productsContainer);
+            }
+        }
+
+        // View product details
+        function viewProductDetails(productId) {
+            currentProduct = products.find(product => product.id === productId);
+
+            if (currentProduct) {
+                // Get category icon for fallback
+                const categoryIcon = getCategoryIcon(currentProduct.category);
+
+                // Set product details
+                const detailImage = document.getElementById('product-detail-image');
+                detailImage.src = currentProduct.image;
+                detailImage.alt = currentProduct.name;
+
+                // Add error handler for image
+                detailImage.onerror = function() {
+                    this.onerror = null;
+                    this.src = `data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22600%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_text%20%7B%20fill%3A%23999%3Bfont-weight%3Anormal%3Bfont-family%3A-apple-system%2CBlinkMacSystemFont%2C%26quot%3BSegoe%20UI%26quot%3B%2CRoboto%2C%26quot%3BHelvetica%20Neue%26quot%3B%2CArial%2C%26quot%3BNoto%20Sans%26quot%3B%2Csans-serif%3Bfont-size%3A30pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%3E%3Crect%20width%3D%22600%22%20height%3D%22400%22%20fill%3D%22%23f8f9fa%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20id%3D%22holder_text%22%20x%3D%22150%22%20y%3D%22220%22%3E${currentProduct.name}%3C%2Ftext%3E%3C%2Fg%3E%3Cg%3E%3Ctext%20x%3D%22300%22%20y%3D%22250%22%20text-anchor%3D%22middle%22%20style%3D%22font-size%3A80px%3B%22%3E%3Ci%20class%3D%22${categoryIcon}%22%3E%3C%2Fi%3E%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E`;
+                };
+
+                document.getElementById('product-detail-name').textContent = currentProduct.name;
+                document.getElementById('product-detail-rating').innerHTML = `
+                    <div class="rating">
+                        ${getRatingStars(currentProduct.rating)}
+                        <small class="text-muted ms-1">(${currentProduct.numReviews} reviews)</small>
+                    </div>
+                `;
+                document.getElementById('product-detail-price').textContent = `$${currentProduct.price.toFixed(2)}`;
+                document.getElementById('product-detail-description').textContent = currentProduct.description;
+                document.getElementById('product-detail-category').textContent = currentProduct.category;
+                document.getElementById('product-detail-stock').textContent = `${currentProduct.countInStock} in stock`;
+                document.getElementById('product-detail-quantity').value = 1;
+                document.getElementById('product-detail-quantity').max = currentProduct.countInStock;
+
+                // Show product detail page
+                showPage('product-detail');
+            }
+        }
+
+        // Add to cart from product detail page
+        function addToCartFromDetail() {
+            if (currentProduct) {
+                const quantity = parseInt(document.getElementById('product-detail-quantity').value);
+                addToCart(currentProduct.id, quantity);
+            }
+        }
+
+        // Increase quantity
+        function increaseQuantity() {
+            const quantityInput = document.getElementById('product-detail-quantity');
+            const currentValue = parseInt(quantityInput.value);
+            const maxValue = parseInt(quantityInput.max);
+
+            if (currentValue < maxValue) {
+                quantityInput.value = currentValue + 1;
+            }
+        }
+
+        // Decrease quantity
+        function decreaseQuantity() {
+            const quantityInput = document.getElementById('product-detail-quantity');
+            const currentValue = parseInt(quantityInput.value);
+
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        }
+
+        // Add to cart
+        function addToCart(productId, quantity = 1) {
+            const product = products.find(p => p.id === productId);
+
+            if (product) {
+                // Check if product is already in cart
+                const existingItemIndex = cart.findIndex(item => item.product.id === productId);
+
+                if (existingItemIndex !== -1) {
+                    // Update quantity if product is already in cart
+                    cart[existingItemIndex].quantity += quantity;
+                } else {
+                    // Add new item to cart
+                    cart.push({
+                        product: product,
+                        quantity: quantity
+                    });
+                }
+
+                // Update cart UI
+                updateCartUI();
+
+                // Show success message
+                const toastContainer = document.createElement('div');
+                toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+                toastContainer.style.zIndex = '5';
+
+                toastContainer.innerHTML = `
+                    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header bg-success text-white">
+                            <strong class="me-auto">Added to Cart</strong>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            ${product.name} has been added to your cart.
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(toastContainer);
+
+                // Remove toast after 3 seconds
+                setTimeout(() => {
+                    toastContainer.remove();
+                }, 3000);
+            }
+        }
+
+        // Update cart UI
+        function updateCartUI() {
+            // Update cart count
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCountElement.textContent = totalItems;
+
+            // Update cart items list
+            if (cart.length === 0) {
+                emptyCartMessage.classList.remove('d-none');
+                cartItemsList.classList.add('d-none');
+            } else {
+                emptyCartMessage.classList.add('d-none');
+                cartItemsList.classList.remove('d-none');
+
+                // Clear cart items list
+                cartItemsList.innerHTML = '';
+
+                // Add cart items
+                let total = 0;
+
+                cart.forEach(item => {
+                    const itemTotal = item.product.price * item.quantity;
+                    total += itemTotal;
+
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+
+                    // Get category icon for fallback
+                    const categoryIcon = getCategoryIcon(item.product.category);
+
+                    cartItem.innerHTML = `
+                        <div class="d-flex align-items-center">
+                            <img src="${item.product.image}" alt="${item.product.name}" class="cart-item-img me-3"
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2250%22%20height%3D%2250%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2050%2050%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%2250%22%20height%3D%2250%22%20fill%3D%22%23f8f9fa%22%3E%3C%2Frect%3E%3Ctext%20x%3D%2225%22%20y%3D%2225%22%20text-anchor%3D%22middle%22%20alignment-baseline%3D%22middle%22%20style%3D%22font-size%3A20px%3B%22%3E%3Ci%20class%3D%22${categoryIcon}%22%3E%3C%2Fi%3E%3C%2Ftext%3E%3C%2Fsvg%3E';">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">${item.product.name}</h6>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <div>
+                                        <small class="text-muted">$${item.product.price.toFixed(2)} x ${item.quantity}</small>
+                                    </div>
+                                    <div>
+                                        <span class="fw-bold">$${itemTotal.toFixed(2)}</span>
+                                        <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeFromCart(${item.product.id})">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    cartItemsList.appendChild(cartItem);
+                });
+
+                // Update total
+                cartTotalElement.textContent = total.toFixed(2);
+            }
+        }
+
+        // Remove from cart
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.product.id !== productId);
+            updateCartUI();
+        }
+
+        // Checkout
+        function checkout() {
+            if (cart.length > 0) {
+                // Generate random order number
+                const orderNumber = Math.floor(100000 + Math.random() * 900000);
+                document.getElementById('order-number').textContent = orderNumber;
+
+                // Show checkout success modal
+                const checkoutSuccessModal = new bootstrap.Modal(document.getElementById('checkoutSuccessModal'));
+                checkoutSuccessModal.show();
+
+                // Clear cart
+                cart = [];
+                updateCartUI();
+            }
+        }
+
+        // Submit contact form
+        function submitContactForm() {
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const subject = document.getElementById('contact-subject').value;
+            const message = document.getElementById('contact-message').value;
+
+            if (name && email && subject && message) {
+                // Show contact success modal
+                const contactSuccessModal = new bootstrap.Modal(document.getElementById('contactSuccessModal'));
+                contactSuccessModal.show();
+
+                // Clear form
+                document.getElementById('contact-form').reset();
+            }
+        }
+
+        // Show register form
+        function showRegisterForm() {
+            // Close login modal
+            const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+            loginModal.hide();
+
+            // Show alert
+            alert('Registration functionality would be implemented in a full application.');
+        }
+
+        // Login
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (email === 'admin@example.com' && password === '123456') {
+                // Close login modal
+                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                loginModal.hide();
+
+                // Show success message
+                alert('Login successful! Welcome, Admin User.');
+            } else {
+                alert('Invalid credentials. Please try again.');
+            }
+        }
+
+        // Show page
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active-page');
+            });
+
+            // Show selected page
+            document.getElementById(`${pageId}-page`).classList.add('active-page');
+
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Find and activate the corresponding nav link
+            const navLinks = document.querySelectorAll('.nav-link');
+            for (let i = 0; i < navLinks.length; i++) {
+                if (navLinks[i].getAttribute('onclick') && navLinks[i].getAttribute('onclick').includes(`showPage('${pageId}')`)) {
+                    navLinks[i].classList.add('active');
+                    break;
+                }
+            }
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>

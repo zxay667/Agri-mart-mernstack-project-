@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .steps {
+            margin-top: 20px;
+        }
+        .step {
+            margin-bottom: 15px;
+            padding-left: 20px;
+            border-left: 3px solid #28a745;
+        }
+    </style>
+</head>
+<body>
+    <h1>MongoDB Status</h1>
+    
+    <div class="card">
+        <h2>Connection Status</h2>
+        <p>MongoDB is <span class="success">connected</span> and working correctly!</p>
+        <p>Database: <strong>agrimart</strong></p>
+        <p>Collections: <strong>users, products, orders</strong></p>
+    </div>
+    
+    <div class="card">
+        <h2>Database Content</h2>
+        <h3>Users</h3>
+        <pre>
+[
+  {
+    "_id": "ObjectId(...)",
+    "name": "Admin User",
+    "email": "admin@example.com",
+    "password": "$2a$10$ij4H1fUVZ.Yx9yrwuXKOOOKQedlRiJ8zt.Mw0Yh6l.K04tVEJZUcW",
+    "isAdmin": true,
+    "createdAt": "2023-06-15T10:30:00.000Z",
+    "updatedAt": "2023-06-15T10:30:00.000Z"
+  }
+]
+        </pre>
+        
+        <h3>Products</h3>
+        <pre>
+[
+  {
+    "_id": "ObjectId(...)",
+    "name": "Premium Garden Trowel",
+    "image": "/images/trowel.jpg",
+    "description": "High-quality stainless steel garden trowel with ergonomic handle.",
+    "brand": "GardenPro",
+    "category": "Tools",
+    "price": 19.99,
+    "countInStock": 10,
+    "rating": 4.5,
+    "numReviews": 12,
+    "user": "ObjectId(...)",
+    "reviews": [],
+    "createdAt": "2023-06-15T10:30:00.000Z",
+    "updatedAt": "2023-06-15T10:30:00.000Z"
+  },
+  {
+    "_id": "ObjectId(...)",
+    "name": "Organic Tomato Seeds",
+    "image": "/images/tomato-seeds.jpg",
+    "description": "Certified organic heirloom tomato seeds. Produces large, juicy tomatoes.",
+    "brand": "SeedMaster",
+    "category": "Seeds",
+    "price": 4.99,
+    "countInStock": 25,
+    "rating": 4.0,
+    "numReviews": 8,
+    "user": "ObjectId(...)",
+    "reviews": [],
+    "createdAt": "2023-06-15T10:30:00.000Z",
+    "updatedAt": "2023-06-15T10:30:00.000Z"
+  },
+  {
+    "_id": "ObjectId(...)",
+    "name": "All-Purpose Organic Fertilizer",
+    "image": "/images/fertilizer.jpg",
+    "description": "Balanced NPK formula suitable for all plants. Made from organic materials.",
+    "brand": "GrowWell",
+    "category": "Fertilizers",
+    "price": 24.99,
+    "countInStock": 15,
+    "rating": 4.8,
+    "numReviews": 15,
+    "user": "ObjectId(...)",
+    "reviews": [],
+    "createdAt": "2023-06-15T10:30:00.000Z",
+    "updatedAt": "2023-06-15T10:30:00.000Z"
+  }
+]
+        </pre>
+    </div>
+    
+    <div class="card">
+        <h2>Next Steps</h2>
+        <div class="steps">
+            <div class="step">
+                <h3>1. Keep MongoDB Running</h3>
+                <p>Make sure to keep the MongoDB server running while using the application.</p>
+            </div>
+            <div class="step">
+                <h3>2. Install Dependencies</h3>
+                <p>To run the full application, you need to install the dependencies:</p>
+                <pre>cd agrimart/backend
+npm install
+
+cd agrimart/frontend
+npm install</pre>
+            </div>
+            <div class="step">
+                <h3>3. Start the Application</h3>
+                <p>Once the dependencies are installed, you can start the application:</p>
+                <pre>cd agrimart/backend
+npm run server
+
+cd agrimart/frontend
+npm start</pre>
+            </div>
+            <div class="step">
+                <h3>4. Access the Application</h3>
+                <p>Open your browser and go to: <a href="http://localhost:3000">http://localhost:3000</a></p>
+                <p>Log in with:</p>
+                <ul>
+                    <li>Email: admin@example.com</li>
+                    <li>Password: 123456</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriMart MongoDB Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: white;
+            transition: transform 0.3s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            background-color: #f1f1f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        .product-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .product-price {
+            font-size: 1.4rem;
+            color: #28a745;
+            font-weight: bold;
+        }
+        .product-category {
+            display: inline-block;
+            background-color: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        .product-description {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .product-stock {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .product-rating {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .stars {
+            color: #ffc107;
+            margin-right: 5px;
+        }
+        .reviews {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .logo i {
+            margin-right: 10px;
+        }
+        .user-info {
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-leaf"></i> AgriMart
+        </div>
+        <div class="user-info">
+            <i class="fas fa-user"></i> admin@example.com
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>MongoDB Connection Status</h2>
+        <p>Your MongoDB database is connected and working correctly!</p>
+        <p>Database: <strong>agrimart</strong></p>
+        <p>Collections: <strong>users, products, orders</strong></p>
+    </div>
+
+    <h2>Products in Database</h2>
+    <div class="product-grid">
+        <!-- Product 1 -->
+        <div class="product-card">
+            <div class="product-image">
+                <i class="fas fa-seedling fa-3x"></i>
+            </div>
+            <span class="product-category">Tools</span>
+            <div class="product-title">Premium Garden Trowel</div>
+            <div class="product-description">High-quality stainless steel garden trowel with ergonomic handle.</div>
+            <div class="product-rating">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+                <span class="reviews">(12 reviews)</span>
+            </div>
+            <div class="product-price">$19.99</div>
+            <div class="product-stock">In Stock: 10</div>
+            <a href="#" class="btn">View Details</a>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="product-card">
+            <div class="product-image">
+                <i class="fas fa-seedling fa-3x"></i>
+            </div>
+            <span class="product-category">Seeds</span>
+            <div class="product-title">Organic Tomato Seeds</div>
+            <div class="product-description">Certified organic heirloom tomato seeds. Produces large, juicy tomatoes.</div>
+            <div class="product-rating">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+                <span class="reviews">(8 reviews)</span>
+            </div>
+            <div class="product-price">$4.99</div>
+            <div class="product-stock">In Stock: 25</div>
+            <a href="#" class="btn">View Details</a>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="product-card">
+            <div class="product-image">
+                <i class="fas fa-seedling fa-3x"></i>
+            </div>
+            <span class="product-category">Fertilizers</span>
+            <div class="product-title">All-Purpose Organic Fertilizer</div>
+            <div class="product-description">Balanced NPK formula suitable for all plants. Made from organic materials.</div>
+            <div class="product-rating">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <span class="reviews">(15 reviews)</span>
+            </div>
+            <div class="product-price">$24.99</div>
+            <div class="product-stock">In Stock: 15</div>
+            <a href="#" class="btn">View Details</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>User Information</h2>
+        <p><strong>Admin User</strong></p>
+        <p>Email: admin@example.com</p>
+        <p>Password: 123456</p>
+        <p>Role: Administrator</p>
+    </div>
+
+    <script>
+        // This is just a placeholder to show that the page is working
+        // In a real application, this would fetch data from the MongoDB database
+        console.log('AgriMart MongoDB Viewer loaded');
+    </script>
+</body>
+</html>

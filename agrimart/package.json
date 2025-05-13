@@ -1,0 +1,22 @@
+{
+  "name": "agrimart",
+  "version": "1.0.0",
+  "description": "AgriMart - Farming Supplies E-commerce Platform",
+  "main": "setup.js",
+  "scripts": {
+    "setup": "node setup.js",
+    "backend": "cd backend && npm run server",
+    "frontend": "cd frontend && npm start",
+    "dev": "cd backend && npm run dev",
+    "seed": "cd backend && npm run data:import",
+    "seed:destroy": "cd backend && npm run data:destroy"
+  },
+  "keywords": [
+    "mern",
+    "ecommerce",
+    "agriculture",
+    "farming"
+  ],
+  "author": "",
+  "license": "MIT"
+}

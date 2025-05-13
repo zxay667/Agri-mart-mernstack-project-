@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriMart MongoDB Setup Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .step {
+            margin-bottom: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 20px;
+        }
+        .note {
+            background-color: #f1c40f;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .success {
+            background-color: #2ecc71;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>AgriMart MongoDB Setup Guide</h1>
+    
+    <div class="note">
+        This guide will help you set up MongoDB for the AgriMart application.
+    </div>
+    
+    <div class="step">
+        <h2>Step 1: Start MongoDB</h2>
+        <p>First, make sure MongoDB is running on your system.</p>
+        <ol>
+            <li>Run the <code>start-mongodb.bat</code> file in the AgriMart directory</li>
+            <li>This will start the MongoDB service or the MongoDB server directly</li>
+            <li>Keep the terminal window open while using the application</li>
+        </ol>
+    </div>
+    
+    <div class="step">
+        <h2>Step 2: Install MongoDB Compass</h2>
+        <p>MongoDB Compass is a graphical user interface for MongoDB that makes it easy to work with your database.</p>
+        <ol>
+            <li>Download MongoDB Compass from: <a href="https://www.mongodb.com/products/compass" target="_blank">https://www.mongodb.com/products/compass</a></li>
+            <li>Install the application following the on-screen instructions</li>
+            <li>Launch MongoDB Compass</li>
+        </ol>
+    </div>
+    
+    <div class="step">
+        <h2>Step 3: Connect to MongoDB</h2>
+        <p>Connect to your local MongoDB instance using MongoDB Compass.</p>
+        <ol>
+            <li>In MongoDB Compass, use the following connection string:
+                <pre>mongodb://localhost:27017</pre>
+            </li>
+            <li>Click "Connect"</li>
+        </ol>
+    </div>
+    
+    <div class="step">
+        <h2>Step 4: Create the AgriMart Database</h2>
+        <ol>
+            <li>In MongoDB Compass, click "Create Database"</li>
+            <li>Enter the following information:
+                <ul>
+                    <li>Database Name: <code>agrimart</code></li>
+                    <li>Collection Name: <code>users</code></li>
+                </ul>
+            </li>
+            <li>Click "Create Database"</li>
+        </ol>
+    </div>
+    
+    <div class="step">
+        <h2>Step 5: Create Additional Collections</h2>
+        <ol>
+            <li>In the <code>agrimart</code> database, create the following collections:
+                <ul>
+                    <li><code>products</code></li>
+                    <li><code>orders</code></li>
+                </ul>
+            </li>
+            <li>To create a new collection:
+                <ul>
+                    <li>Click on the <code>agrimart</code> database</li>
+                    <li>Click "Create Collection"</li>
+                    <li>Enter the collection name</li>
+                    <li>Click "Create Collection"</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+    
+    <div class="step">
+        <h2>Step 6: Add Sample Data</h2>
+        
+        <h3>Add a Sample Admin User</h3>
+        <ol>
+            <li>Click on the <code>users</code> collection</li>
+            <li>Click "Add Data" > "Insert Document"</li>
+            <li>Enter the following JSON:
+<pre>{
+  "name": "Admin User",
+  "email": "admin@example.com",
+  "password": "$2a$10$ij4H1fUVZ.Yx9yrwuXKOOOKQedlRiJ8zt.Mw0Yh6l.K04tVEJZUcW",
+  "isAdmin": true
+}</pre>
+            </li>
+            <li>Click "Insert"</li>
+        </ol>
+        
+        <h3>Add a Sample Product</h3>
+        <ol>
+            <li>Click on the <code>products</code> collection</li>
+            <li>Click "Add Data" > "Insert Document"</li>
+            <li>Enter the following JSON (replace <code>[ADMIN_USER_ID]</code> with the ObjectId of the admin user you created):
+<pre>{
+  "name": "Premium Garden Trowel",
+  "image": "/images/trowel.jpg",
+  "description": "High-quality stainless steel garden trowel with ergonomic handle.",
+  "brand": "GardenPro",
+  "category": "Tools",
+  "price": 19.99,
+  "countInStock": 10,
+  "rating": 4.5,
+  "numReviews": 12,
+  "user": ObjectId("[ADMIN_USER_ID]"),
+  "reviews": []
+}</pre>
+            </li>
+            <li>Click "Insert"</li>
+        </ol>
+    </div>
+    
+    <div class="step">
+        <h2>Step 7: Run the AgriMart Application</h2>
+        <ol>
+            <li>Start the backend:
+                <pre>cd agrimart/backend
+npm run server</pre>
+            </li>
+            <li>Start the frontend:
+                <pre>cd agrimart/frontend
+npm start</pre>
+            </li>
+            <li>Access the application at: <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></li>
+            <li>Log in with:
+                <ul>
+                    <li>Email: admin@example.com</li>
+                    <li>Password: 123456</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+    
+    <div class="success">
+        <h3>Congratulations!</h3>
+        <p>You have successfully set up MongoDB for the AgriMart application.</p>
+    </div>
+    
+    <div class="note">
+        <h3>Troubleshooting</h3>
+        <p>If you encounter issues:</p>
+        <ul>
+            <li><strong>MongoDB Connection Issues</strong>: Make sure the MongoDB service is running</li>
+            <li><strong>Application Startup Issues</strong>: Make sure all dependencies are installed</li>
+            <li><strong>Database Access Issues</strong>: Check if MongoDB is accessible at localhost:27017</li>
+        </ul>
+    </div>
+</body>
+</html>
